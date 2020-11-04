@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Event\UserCreatedEvent;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Service\Mailer;
 use App\Service\TokenGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,17 +19,22 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 /**
  * @Route("/register", name="app_register")
  */
-class RegistrationController extends AbstractController
+final class RegistrationController extends AbstractController
 {
 
     /**
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $manager;
+    /**
+     * @var EventDispatcherInterface
+     */
+    private EventDispatcherInterface $dispatcher;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->manager = $entityManager;
+        $this->dispatcher = $eventDispatcher;
     }
 
     /**
@@ -39,7 +46,7 @@ class RegistrationController extends AbstractController
      * @return Response
      * @throws \Exception
      */
-    final public function register(
+    public function register(
         Request $request,
         UserPasswordEncoderInterface $passwordEncoder,
         Mailer $mailer,
@@ -66,14 +73,7 @@ class RegistrationController extends AbstractController
             $this->manager->persist($user);
             $this->manager->flush();
 
-            $email = $mailer->buildEmail(
-                "SymfonyCorps | Confirmation de votre compte",
-                $user->getEmail(),
-                'emails/register.html.twig',
-                ['user' => $user]
-            );
-
-            $mailer->send($email);
+            $this->dispatcher->dispatch(new UserCreatedEvent($user));
 
             $this->addFlash(
                 'success',
@@ -93,7 +93,7 @@ class RegistrationController extends AbstractController
      * @param User $user
      * @param Request $request
      */
-    final public function verifyEmail(User $user, Request $request): Response
+    public function verifyEmail(User $user, Request $request): Response
     {
         $token = $request->get('token');
 

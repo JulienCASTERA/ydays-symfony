@@ -15,17 +15,14 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class RegistrationFormType extends AbstractType
+class ResetPasswordFormType extends AbstractType
 {
     final public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class, [
-                'label' => 'Email address'
-            ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'first_options'  => ['label' => 'Mot de passe'],
+                'first_options'  => ['label' => 'Nouveau mot de passe'],
                 'second_options' => ['label' => 'Confirmation de mot de passe'],
                 'mapped' => false,
                 'required' => true,
@@ -43,7 +40,7 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Register'
+                'label' => 'Confirmer'
             ])
         ;
     }
