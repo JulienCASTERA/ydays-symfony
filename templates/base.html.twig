@@ -1,14 +1,21 @@
 <!DOCTYPE html>
-<html>
+    <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Intro{% endblock %}</title>
+        <title>{% block title %}{% endblock %} | SymfoCorps</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('tailwind') }}
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% include '_partials/header.html.twig' %}
+
+        <div class="min-h-screen px-5 py-3">
+            {% block body %}{% endblock %}
+        </div>
+
+        {% include '_partials/footer.html.twig' %}
+
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
