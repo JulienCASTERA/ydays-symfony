@@ -17,6 +17,8 @@ security:
         main:
             anonymous: true
             lazy: true
+            pattern: ^/
+            user_checker: App\Security\UserChecker
             provider: app_user_provider
             guard:
                 authenticators:

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\Timestampable;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -13,6 +14,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+    use Timestampable;
+
+    public const TOKEN_VALIDITY = '-4 hours';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -35,6 +40,16 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      */
     private string $password;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $confirmationToken = null;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default" : "0"})
+     */
+    private bool $isVerified = false;
 
     public function getId(): ?int
     {
@@ -75,7 +90,7 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    final public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 
@@ -85,12 +100,12 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getPassword(): string
+    final public function getPassword(): string
     {
         return (string) $this->password;
     }
 
-    public function setPassword(string $password): self
+    final public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -100,14 +115,38 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getSalt(): void
+    final public function getSalt(): void
     {
     }
 
     /**
      * @see UserInterface
      */
-    public function eraseCredentials(): void
+    final public function eraseCredentials(): void
     {
+    }
+
+    final public function getConfirmationToken(): ?string
+    {
+        return $this->confirmationToken;
+    }
+
+    final public function setConfirmationToken(?string $confirmationToken): self
+    {
+        $this->confirmationToken = $confirmationToken;
+
+        return $this;
+    }
+
+    final public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    final public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
     }
 }

@@ -12,6 +12,7 @@ services:
     # Définition du port sur lequel écouté, on le lie au port 8080 local "portchoisi:portapache"
     ports:
       - "8080:80"
+      -
   mysql:
     image: mysql:5.7
     command:
@@ -25,3 +26,10 @@ services:
       - MYSQL_PASSWORD=introintro
     ports:
       - "3307:3306"
+
+  mail:
+    image: mailhog/mailhog:latest
+
+    ports:
+    - "1025:1025"
+    - "8025:8025"

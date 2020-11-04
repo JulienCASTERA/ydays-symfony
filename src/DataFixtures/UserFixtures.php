@@ -23,14 +23,16 @@ class UserFixtures extends Fixture
         $user
             ->setEmail('admin@test.fr')
             ->setPassword($this->encoder->encodePassword($user,'test'))
+            ->setIsVerified(true)
         ;
         $manager->persist($user);
 
-        for($u = 0; $u <= 10; $u++)
+        for($u = 1; $u <= 10; $u++)
         {
             $user = (new User())
-                ->setEmail(sprintf('user%s@test.com', $u));
-
+                ->setEmail(sprintf('user%s@test.com', $u))
+                ->setIsVerified(true)
+            ;
             $user
                 ->setPassword($this->encoder->encodePassword($user, 'test'));
 

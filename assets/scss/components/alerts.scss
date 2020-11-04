@@ -1,3 +1,7 @@
 .alert-danger {
   @apply bg-red-400 text-white font-medium px-5 py-2 rounded-md;
 }
+
+.alert-success {
+  @apply bg-green-400 text-white font-medium px-5 py-2 rounded-md;
+}
